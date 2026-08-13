@@ -1,56 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Peta Kerja Digital — Direktorat Pemetaan Lahan dan Irigasi Pertanian</title>
+<meta name="description" content="Portal Peta Kerja Digital dan Web-GIS Kolaboratif Direktorat Pemetaan Lahan dan Irigasi Pertanian, Direktorat Jenderal Lahan dan Irigasi Pertanian, Kementerian Pertanian RI.">
+<meta name="theme-color" content="#10262B">
+
+<!-- Favicon / Icon Tab Browser -->
+<link rel="icon" href="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/32b04a6677d44c7d8fd3ee7f05151d93/data" type="image/png">
+<link rel="apple-touch-icon" href="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/32b04a6677d44c7d8fd3ee7f05151d93/data">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Sora:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
 <style>
-  /* ==========================================================================
-     1. ARCGIS HUB GLOBAL OVERRIDE & CLEANUP
-     ========================================================================== */
-  .markdown-card { 
-    margin: 0 !important; 
-  }
-
-  h1 { 
-    font-family: 'Sora', sans-serif !important; 
-  }
-
-  a { 
-    text-decoration: none !important; 
-  }
-
-  /* Hilangkan Header, Banner, & Mobile Toolbar bawaan ArcGIS Hub */
-  header, 
-  button[aria-label="Add to Favorites"], 
-  .info-banner, 
-  .mobile-toolbar { 
-    display: none !important; 
-  }
-
-  /* Paksa Container Utama ArcGIS Hub Menjadi Full 100% Tanpa Space */
-  html, 
-  body, 
-  .page-body, 
-  .page-body .container, 
-  .page-body .container-fluid,
-  .row-container, 
-  .section-container { 
-    margin: 0 !important; 
-    padding: 0 !important; 
-    width: 100% !important;
-    max-width: 100% !important; 
-    height: 100% !important;
-  }
-
-
-  /* ==========================================================================
-     2. ISOLASI STYLE UTAMA (LIP PETA KERJA DIGITAL)
-     ========================================================================== */
-  .lip-peta-card * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  .lip-peta-card {
+  :root {
     --ink: #10262B;
     --ink-2: #17343B;
     --ink-3: #1E4048;
+    --paper: #F6F8F5;
     --line: #1F7A72;
     --line-bright: #35B7AC;
     --text-on-ink: #E7EFEC;
@@ -61,10 +32,14 @@
     --c-air: #2E9BD6;
     --radius: 12px;
     --radius-sm: 6px;
-    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Space Grotesk', 'Sora', sans-serif;
+    --font-body: 'IBM Plex Sans', sans-serif;
     --font-mono: 'IBM Plex Mono', monospace;
+  }
 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
     width: 100%;
     min-height: 100vh;
     background: var(--ink);
@@ -72,21 +47,34 @@
     font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  a { color: inherit; text-decoration: none !important; }
+  img, svg { display: block; max-width: 100%; }
+
+  /* WRAPPER UTAMA */
+  .peta-wrapper {
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    -webkit-font-smoothing: antialiased;
   }
 
-  /* NAVBAR INTERNAL CARD */
-  .lip-peta-card .nav {
+  /* ---------- NAVBAR ---------- */
+  .nav {
     flex-shrink: 0;
     background: var(--ink);
     border-bottom: 1px solid var(--border-ink);
-    padding: 14px 24px;
+    padding: 14px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
-  .lip-peta-card .nav__inner {
+  .nav__inner {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
@@ -95,16 +83,20 @@
     gap: 12px;
   }
 
-  .lip-peta-card .nav__brand {
+  .nav__brand {
     display: flex;
     align-items: center;
     gap: 10px;
     color: var(--text-on-ink);
-    text-decoration: none !important;
   }
 
-  /* SECTION PETA KERJA */
-  .lip-peta-card .peta-futuristic {
+  .nav__title-text {
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
+  /* ---------- SECTION: PETA KERJA DIGITAL ---------- */
+  .peta-section {
     flex: 1;
     position: relative;
     background: var(--ink);
@@ -113,7 +105,7 @@
     width: 100%;
   }
 
-  .lip-peta-card .peta-futuristic__bg {
+  .peta-section__bg {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -121,7 +113,7 @@
     pointer-events: none;
   }
 
-  .lip-peta-card .peta-futuristic__head {
+  .peta-section__head {
     position: relative;
     z-index: 2;
     text-align: center;
@@ -129,7 +121,7 @@
     margin: 0 auto 36px;
   }
 
-  .lip-peta-card .peta-futuristic__title {
+  .peta-section__title {
     font-family: var(--font-display);
     font-size: clamp(26px, 3.8vw, 42px);
     font-weight: 700;
@@ -137,7 +129,7 @@
     letter-spacing: -0.01em;
   }
 
-  .lip-peta-card .peta-futuristic__list {
+  .peta-section__list {
     position: relative;
     z-index: 2;
     max-width: 1100px;
@@ -147,8 +139,9 @@
     gap: 24px;
   }
 
-  .lip-peta-card .cyber-card {
-    background: rgba(23, 52, 59, 0.45);
+  /* CYBER CARD */
+  .cyber-card {
+    background: rgba(23, 52, 59, 0.55);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-ink);
@@ -156,25 +149,29 @@
     padding: 26px 32px;
     display: grid;
     grid-template-columns: 220px 1fr;
-    gap: 36px;
+    gap: 32px;
     align-items: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     position: relative;
     overflow: hidden;
+    transition: transform 0.25s ease, border-color 0.25s ease;
   }
 
-  .lip-peta-card .cyber-card::before {
+  .cyber-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-bright);
+  }
+
+  .cyber-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
     background: var(--accent-color, var(--line-bright));
-    opacity: 0.8;
+    opacity: 0.85;
   }
 
-  .lip-peta-card .cyber-card__illus {
+  .cyber-card__illus {
     background: rgba(16, 38, 43, 0.75);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-sm);
@@ -184,20 +181,20 @@
     align-items: center;
   }
 
-  .lip-peta-card .cyber-card__illus svg {
+  .cyber-card__illus svg {
     width: 100%;
     max-width: 170px;
     height: auto;
   }
 
-  .lip-peta-card .cyber-card__content {
+  .cyber-card__content {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
 
-  .lip-peta-card .cyber-card__title {
+  .cyber-card__title {
     font-family: var(--font-display);
     font-size: clamp(18px, 2.2vw, 24px);
     font-weight: 700;
@@ -205,23 +202,25 @@
     line-height: 1.25;
   }
 
-  .lip-peta-card .cyber-card__desc {
+  .cyber-card__desc {
     font-size: 14px;
     color: var(--text-on-ink-muted);
     line-height: 1.6;
   }
 
-  .lip-peta-card .cyber-card__btn-group {
+  .cyber-card__btn-group {
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     margin-top: 6px;
+    width: 100%;
   }
 
-  .lip-peta-card .cyber-card__btn {
+  .cyber-card__btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     padding: 10px 16px;
     background: linear-gradient(135deg, var(--ink-3), var(--ink-2));
@@ -230,32 +229,27 @@
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.04em;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: var(--radius-sm);
-    text-decoration: none !important;
     transition: all 0.25s ease;
   }
 
-  .lip-peta-card .cyber-card__btn:hover {
+  .cyber-card__btn:hover {
     background: var(--line-bright);
     color: var(--ink);
     border-color: var(--line-bright);
   }
 
-  .lip-peta-card .cyber-card__btn svg {
-    width: 14px;
-    height: 14px;
-  }
-
-  /* FOOTER LENGKAP CARD */
-  .lip-peta-card .footer {
+  /* ---------- FOOTER ---------- */
+  .footer {
+    flex-shrink: 0;
     background: var(--ink);
     color: var(--text-on-ink-muted);
-    padding: 40px 20px 30px;
+    padding: 40px 20px 24px;
     border-top: 1px solid var(--border-ink);
   }
 
-  .lip-peta-card .footer__inner {
+  .footer__inner {
     max-width: 1200px;
     margin: 0 auto;
     padding-bottom: 24px;
@@ -267,21 +261,21 @@
     justify-content: space-between;
   }
 
-  .lip-peta-card .footer__brand {
+  .footer__brand {
     display: flex;
     align-items: flex-start;
     gap: 16px;
     max-width: 580px;
   }
 
-  .lip-peta-card .footer__logo-img {
+  .footer__logo-img {
     width: 50px;
     height: auto;
     flex-shrink: 0;
     margin-top: 2px;
   }
 
-  .lip-peta-card .footer__address-info {
+  .footer__address-info {
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -289,44 +283,31 @@
     line-height: 1.5;
   }
 
-  .lip-peta-card .footer__address-title {
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 14.5px;
-  }
+  .footer__address-title { color: #ffffff; font-weight: 700; font-size: 14.5px; }
+  .footer__address-subtitle { color: var(--line-bright); font-weight: 600; font-size: 13px; }
+  .footer__address-text { color: var(--text-on-ink-muted); }
 
-  .lip-peta-card .footer__address-subtitle {
-    color: var(--line-bright);
-    font-weight: 600;
-    font-size: 13px;
-  }
-
-  .lip-peta-card .footer__address-text {
-    color: var(--text-on-ink-muted);
-  }
-
-  .lip-peta-card .footer__actions-stacked {
+  .footer__actions-stacked {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 12px;
   }
 
-  .lip-peta-card .footer__cp-text {
+  .footer__cp-text {
     font-size: 13px;
     color: var(--text-on-ink-muted);
     line-height: 1.4;
     text-align: right;
   }
 
-  .lip-peta-card .footer__cp-link {
+  .footer__cp-link {
     font-family: var(--font-mono);
     color: var(--line-bright);
     font-weight: 500;
-    text-decoration: none !important;
   }
 
-  .lip-peta-card .footer__btn-layanan {
+  .footer__btn-layanan {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -338,12 +319,11 @@
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.04em;
-    font-weight: 500;
+    font-weight: 600;
     border-radius: var(--radius-sm);
-    text-decoration: none !important;
   }
 
-  .lip-peta-card .footer__bottom {
+  .footer__bottom {
     max-width: 1200px;
     margin: 0 auto;
     padding-top: 16px;
@@ -355,57 +335,98 @@
     font-size: 11px;
   }
 
-  /* RESPONSIF MOBILE */
-  @media (max-width: 820px) {
-    .lip-peta-card .cyber-card {
-      grid-template-columns: 1fr;
-      gap: 20px;
-      padding: 20px;
+  /* ---------- MEDIA QUERIES UNTUK SMARTPHONE / HP ---------- */
+  @media (max-width: 768px) {
+    .nav__inner {
+      padding: 10px 0;
     }
-    .lip-peta-card .footer__inner {
+    .nav__title-text {
+      font-size: 11px;
+    }
+    .peta-section {
+      padding: 24px 14px 40px;
+    }
+    .peta-section__head {
+      margin-bottom: 24px;
+    }
+    .cyber-card {
+      grid-template-columns: 1fr; /* Gambar Otomatis Pindah ke Atas */
+      gap: 18px;
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .cyber-card__illus {
+      max-width: 180px;
+      margin: 0 auto;
+    }
+    .cyber-card__content {
+      align-items: center;
+      text-align: center;
+    }
+    .cyber-card__btn-group {
       flex-direction: column;
-      gap: 24px;
+      align-items: stretch;
+      gap: 8px;
     }
-    .lip-peta-card .footer__actions-stacked {
+    .cyber-card__btn {
+      width: 100%; /* Tombol Full Width di Layar HP */
+    }
+    .footer {
+      padding: 30px 16px 20px;
+    }
+    .footer__inner {
+      flex-direction: column;
+      gap: 20px;
+    }
+    .footer__brand {
+      flex-direction: row;
+      gap: 12px;
+    }
+    .footer__logo-img {
+      width: 42px;
+    }
+    .footer__actions-stacked {
       align-items: flex-start;
       width: 100%;
     }
-    .lip-peta-card .footer__cp-text {
+    .footer__cp-text {
       text-align: left;
     }
-    .lip-peta-card .footer__btn-layanan {
+    .footer__btn-layanan {
       width: 100%;
     }
-    .lip-peta-card .footer__bottom {
+    .footer__bottom {
       flex-direction: column;
+      gap: 6px;
       text-align: center;
     }
   }
 </style>
+</head>
+<body>
 
-<!-- ELEMEN UTAMA WIDGET PETA KERJA DIGITAL -->
-<div class="lip-peta-card">
+<div class="peta-wrapper">
   <!-- NAVBAR -->
-  <div class="nav">
+  <nav class="nav">
     <div class="nav__inner">
       <a href="https://pemetaan-lip-basisdatalahan.opendata.arcgis.com/" class="nav__brand">
-        <img src="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/db8b8fee66af42baa9956c003c4b315d/data" width="32" alt="Logo Kementan">
-        <div style="font-size: 12.5px; line-height: 1.2;">
+        <img src="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/db8b8fee66af42baa9956c003c4b315d/data" width="32" height="32" alt="Logo Kementan">
+        <div class="nav__title-text">
           <strong>Direktorat Pemetaan</strong><br />Lahan dan Irigasi Pertanian
         </div>
       </a>
 
       <a href="https://pemetaan-lip-basisdatalahan.opendata.arcgis.com/" class="nav__brand">
-        <div style="font-size: 12.5px; line-height: 1.2; text-align: right;">
+        <div class="nav__title-text" style="text-align: right;">
           <strong>Kembali ke Beranda</strong><br />&larr; Home
         </div>
       </a>
     </div>
-  </div>
+  </nav>
 
   <!-- SECTION: PETA KERJA DIGITAL -->
-  <div class="peta-futuristic">
-    <svg class="peta-futuristic__bg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <main class="peta-section">
+    <svg class="peta-section__bg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
       <defs>
         <pattern id="cyber-dots" width="28" height="28" patternUnits="userSpaceOnUse">
           <circle cx="1.5" cy="1.5" r="1.5" fill="#35B7AC" opacity="0.12" />
@@ -414,13 +435,13 @@
       <rect width="1440" height="600" fill="url(#cyber-dots)" />
     </svg>
 
-    <div class="peta-futuristic__head">
-      <h2 class="peta-futuristic__title">Peta Kerja Digital</h2>
+    <div class="peta-section__head">
+      <h1 class="peta-section__title">Peta Kerja Digital</h1>
     </div>
 
-    <div class="peta-futuristic__list">
+    <div class="peta-section__list">
       <!-- CARD 1 -->
-      <div class="cyber-card" style="--accent-color: var(--c-ltt);">
+      <article class="cyber-card" style="--accent-color: var(--c-ltt);">
         <div class="cyber-card__illus">
           <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="200" height="160" rx="6" fill="#10262B" />
@@ -434,7 +455,7 @@
           </svg>
         </div>
         <div class="cyber-card__content">
-          <h3 class="cyber-card__title">Usulan Kegiatan LIP</h3>
+          <h2 class="cyber-card__title">Usulan Kegiatan LIP</h2>
           <p class="cyber-card__desc">Peta spasial interaktif yang memuat sebaran usulan program dan kegiatan Direktorat Jenderal Lahan dan Irigasi Pertanian secara nasional.</p>
           <div class="cyber-card__btn-group">
             <a target="_blank" href="https://basisdatalahan.hub.arcgis.com/pages/usulan-csr-2026" class="cyber-card__btn">FORM USULAN CSR</a>
@@ -443,10 +464,10 @@
             <a target="_blank" href="https://www.youtube.com/watch?v=oCXAsORJSQ8" class="cyber-card__btn">TUTORIAL</a>
           </div>
         </div>
-      </div>
+      </article>
 
       <!-- CARD 2 -->
-      <div class="cyber-card" style="--accent-color: var(--c-rehab);">
+      <article class="cyber-card" style="--accent-color: var(--c-rehab);">
         <div class="cyber-card__illus">
           <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="200" height="160" rx="6" fill="#10262B" />
@@ -456,17 +477,17 @@
           </svg>
         </div>
         <div class="cyber-card__content">
-          <h3 class="cyber-card__title">Updating LBS Sumatera</h3>
+          <h2 class="cyber-card__title">Updating LBS Sumatera</h2>
           <p class="cyber-card__desc">Platform verifikasi dan validasi lapangan untuk pemutakhiran Lahan Baku Sawah (LBS) Parsial di wilayah Pulau Sumatera Tahun 2026.</p>
           <div class="cyber-card__btn-group">
             <a target="_blank" href="https://basisdatalahan.hub.arcgis.com/pages/lbs-sumatera" class="cyber-card__btn">PETA KERJA</a>
             <a target="_blank" href="https://youtu.be/XJyQ-JoMthA?si=A0zfjl5_O1RBPB7J&t=1569" class="cyber-card__btn">TUTORIAL</a>
           </div>
         </div>
-      </div>
+      </article>
 
       <!-- CARD 3 -->
-      <div class="cyber-card" style="--accent-color: var(--c-air);">
+      <article class="cyber-card" style="--accent-color: var(--c-air);">
         <div class="cyber-card__illus">
           <svg viewBox="0 0 200 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect width="200" height="160" rx="6" fill="#10262B" />
@@ -478,18 +499,18 @@
           </svg>
         </div>
         <div class="cyber-card__content">
-          <h3 class="cyber-card__title">Petak Sawah Sleman</h3>
+          <h2 class="cyber-card__title">Petak Sawah Sleman</h2>
           <p class="cyber-card__desc">Peta kerja parsial dan inventarisasi petak lahan sawah mendalam berbasis polygon detail untuk wilayah Kabupaten Sleman.</p>
           <div class="cyber-card__btn-group">
             <a target="_blank" href="https://basisdatalahan.hub.arcgis.com/pages/sleman" class="cyber-card__btn">PETA KERJA</a>
           </div>
         </div>
-      </div>
+      </article>
     </div>
-  </div>
+  </main>
 
-  <!-- FOOTER LENGKAP -->
-  <div class="footer">
+  <!-- FOOTER -->
+  <footer class="footer">
     <div class="footer__inner">
       <div class="footer__brand">
         <img src="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/32b04a6677d44c7d8fd3ee7f05151d93/data" class="footer__logo-img" alt="Logo Kementan">
@@ -518,6 +539,8 @@
       <span>© 2026 Direktorat Pemetaan Lahan dan Irigasi Pertanian</span>
       <span>Portal Basis Data Geospasial Pertanian</span>
     </div>
-  </div>
-
+  </footer>
 </div>
+
+</body>
+</html>
