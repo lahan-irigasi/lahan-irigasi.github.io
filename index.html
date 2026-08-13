@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pemetaan Lahan dan Irigasi Pertanian — Web-GIS Kolaboratif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#10262B;
+    --ink-2:#17343B;
+    --ink-3:#1E4048;
+    --paper:#F6F8F5;
+    --paper-2:#EDF1EA;
+    --line:#1F7A72;
+    --line-bright:#35B7AC;
+    --text:#16241F;
+    --text-muted:#56675F;
+    --text-on-ink:#E7EFEC;
+    --text-on-ink-muted:#9FB4AF;
+    --border:#DDE4DB;
+    --border-ink:#2A4A4F;
+    --c-ltt:#6FA23B;
+    --c-cetak:#2E6B3E;
+    --c-rehab:#21668F;
+    --c-air:#2E9BD6;
+    --radius:10px;
+    --radius-sm:6px;
+    --font-display:'Space Grotesk',sans-serif;
+    --font-body:'IBM Plex Sans',sans-serif;
+    --font-mono:'IBM Plex Mono',monospace;
+    --shadow:0 10px 28px rgba(16,38,43,0.10);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--font-body);
+    font-size:16px;
+    line-height:1.55;
+    color:var(--text);
+    background:var(--paper);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:var(--font-display); margin:0;}
+  p{margin:0;}
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
+  button{font:inherit; background:none; border:none; cursor:pointer; color:inherit;}
+  ul{list-style:none; margin:0; padding:0;}
+  :focus-visible{outline:2px solid var(--line-bright); outline-offset:2px; border-radius:4px;}
+
+  .wrap{max-width:1200px; margin:0 auto; padding-left:28px; padding-right:28px;}
+  .eyebrow{font-family:var(--font-mono); font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;}
+
+  /* ---------- NAVBAR ---------- */
+  .nav{position:sticky; top:0; z-index:100; background:var(--ink); border-bottom:1px solid var(--border-ink);}
+  .nav__inner{max-width:1200px; margin:0 auto; padding:14px 28px; display:flex; align-items:center; justify-content:space-between; position:relative;}
+  .nav__brand{display:flex; align-items:center; gap:10px; color:var(--text-on-ink);}
+  .nav__logo{width:30px; height:30px; color:var(--line-bright); flex-shrink:0;}
+  .nav__wordmark{font-family:var(--font-display); font-weight:600; font-size:15px; letter-spacing:.03em;}
+
+  .nav__toggle{display:none; color:var(--text-on-ink); padding:6px;}
+  .nav__toggle svg{width:22px; height:22px;}
+
+  .nav__links{display:flex; align-items:center; gap:2px;}
+  .nav__link{font-size:14.5px; padding:10px 14px; border-radius:var(--radius-sm); color:var(--text-on-ink-muted);}
+  .nav__link:hover{color:var(--text-on-ink); background:rgba(255,255,255,0.06);}
+
+  .nav__item--dropdown{position:relative;}
+  .nav__trigger{display:flex; align-items:center; gap:6px; font-size:14.5px; padding:10px 14px; border-radius:var(--radius-sm); color:var(--text-on-ink-muted);}
+  .nav__trigger:hover{color:var(--text-on-ink); background:rgba(255,255,255,0.06);}
+  .nav__item--dropdown.is-open .nav__trigger{color:var(--text-on-ink); background:rgba(255,255,255,0.06);}
+  .nav__chevron{width:13px; height:13px; transition:transform .18s ease;}
+  .nav__item--dropdown.is-open .nav__chevron{transform:rotate(180deg);}
+
+  .nav__panel{
+    position:absolute; top:calc(100% + 10px); left:0; min-width:290px;
+    background:var(--ink-2); border:1px solid var(--border-ink); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:8px;
+    opacity:0; visibility:hidden; transform:translateY(-6px);
+    transition:opacity .16s ease, transform .16s ease, visibility .16s ease;
+  }
+  .nav__item--dropdown.is-open .nav__panel{opacity:1; visibility:visible; transform:translateY(0);}
+  .nav__panel-item{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:11px 12px; border-radius:var(--radius-sm); color:var(--text-on-ink);}
+  .nav__panel-item:hover{background:rgba(255,255,255,0.07);}
+  .nav__panel-label{display:flex; align-items:center; gap:10px; font-size:13.5px;}
+  .nav__panel-dot{width:8px; height:8px; border-radius:50%; flex-shrink:0;}
+  .nav__panel-tag{font-family:var(--font-mono); font-size:9.5px; letter-spacing:.08em; color:var(--text-on-ink-muted); border:1px solid var(--border-ink); padding:3px 6px; border-radius:4px; white-space:nowrap;}
+
+  @media (max-width:880px){
+    .nav__toggle{display:inline-flex;}
+    .nav__links{
+      position:absolute; top:100%; left:0; right:0; background:var(--ink);
+      flex-direction:column; align-items:stretch; gap:2px;
+      padding:10px 16px 18px; border-top:1px solid var(--border-ink);
+      display:none;
+    }
+    .nav__links.is-open{display:flex;}
+    .nav__item--dropdown{width:100%;}
+    .nav__trigger{width:100%; justify-content:space-between;}
+    .nav__panel{
+      position:static; box-shadow:none; border:none; background:transparent;
+      opacity:1; visibility:visible; transform:none; margin-top:2px; padding:0 0 0 6px;
+      display:none;
+    }
+    .nav__item--dropdown.is-open .nav__panel{display:block;}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative; background:var(--ink); color:var(--text-on-ink); overflow:hidden; padding:100px 28px 96px; text-align:center;}
+  .hero__bg{position:absolute; inset:0; width:100%; height:100%;}
+  .hero__bg .contours{animation:driftLines 28s ease-in-out infinite;}
+  @media (prefers-reduced-motion:reduce){ .hero__bg .contours{animation:none;} }
+  @keyframes driftLines{0%,100%{transform:translateX(0);} 50%{transform:translateX(22px);}}
+
+  .hero__coord{position:absolute; display:flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:11px; color:var(--text-on-ink-muted); letter-spacing:.04em;}
+  .hero__coord svg{width:10px; height:10px;}
+  .hero__coord--tl{top:22px; left:26px;}
+  .hero__coord--br{bottom:22px; right:26px;}
+
+  .hero__content{position:relative; z-index:2; max-width:740px; margin:0 auto;}
+  .hero__eyebrow{color:var(--line-bright);}
+  .hero__title{font-weight:700; font-size:clamp(30px,4.6vw,50px); line-height:1.14; margin:18px 0 14px; letter-spacing:-.01em;}
+  .hero__subtitle{font-style:italic; font-size:clamp(15px,1.8vw,18.5px); color:var(--text-on-ink-muted);}
+
+  .hero__scale{display:flex; align-items:center; justify-content:center; gap:10px; margin-top:34px; color:var(--text-on-ink-muted);}
+  .hero__scale svg{width:170px; height:12px;}
+  .hero__scale-label{font-family:var(--font-mono); font-size:11px; letter-spacing:.05em;}
+
+  /* ---------- SEKSI: SATU PETA BANYAK TANGAN ---------- */
+  .kolaborasi {
+    background: var(--paper);
+    padding: 80px 28px;
+    border-top: 1px solid var(--border);
+  }
+  .kolaborasi__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 52px;
+    align-items: center;
+  }
+  @media (max-width: 900px) {
+    .kolaborasi__inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+
+  .kolaborasi__illus-box {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .kolaborasi__illus-box svg {
+    width: 100%;
+    height: auto;
+  }
+
+  .kolaborasi__content {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .kolaborasi__title {
+    font-size: clamp(28px, 3.5vw, 38px);
+    font-weight: 700;
+    color: #2E6B3E; /* Hijau Khas Slogan */
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .kolaborasi__desc {
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--text);
+  }
+  .kolaborasi__note {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text-muted);
+    line-height: 1.6;
+    border-left: 3px solid var(--line-bright);
+    padding-left: 16px;
+    margin-top: 6px;
+  }
+  .kolaborasi__illus-box {
+    background: transparent;  /* Kosongkan background */
+    border: none;             /* Hapus border kotak */
+    padding: 0;
+    box-shadow: none;         /* Hapus bayangan */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* ---------- FOOTER ---------- */
+  .footer{background:var(--ink); color:var(--text-on-ink-muted); padding:42px 28px 22px;}
+  .footer__inner{
+    max-width:1200px; margin:0 auto; padding-bottom:26px; border-bottom:1px solid var(--border-ink);
+    display:flex; flex-wrap:wrap; gap:24px; align-items:flex-start; justify-content:space-between;
+  }
+  .footer__brand{display:flex; align-items:center; gap:14px; flex-wrap:wrap;}
+  .footer__logo{width:34px; height:34px; color:var(--line-bright); flex-shrink:0;}
+  .footer__org{font-size:13px; line-height:1.5;}
+  .footer__org strong{display:block; color:#fff; font-weight:600; font-size:13.5px;}
+  .footer__divider{width:1px; align-self:stretch; background:var(--border-ink);}
+
+  .footer__links{display:flex; gap:22px; flex-wrap:wrap;}
+  .footer__links a{font-size:13.5px;}
+  .footer__links a:hover{color:var(--text-on-ink);}
+
+  .footer__bottom{max-width:1200px; margin:0 auto; padding-top:16px; display:flex; flex-wrap:wrap; gap:8px; justify-content:space-between; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em;}
+</style>
+</head>
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <header class="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__brand" aria-label="Beranda">
+        <img src="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/32b04a6677d44c7d8fd3ee7f05151d93/data" width="35px" alt="">
+        <span class="nav__wordmark">DITJEN&nbsp;LIP</span>
+      </a>
+
+      <button class="nav__toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false" aria-controls="navLinks">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <nav class="nav__links" id="navLinks">
+        <a href="#" class="nav__link">Home</a>
+
+        <div class="nav__item nav__item--dropdown" id="petaKerjaDropdown">
+          <button class="nav__trigger" id="petaKerjaTrigger" aria-haspopup="true" aria-expanded="false">
+            Peta Kerja
+            <svg class="nav__chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6 L8 10 L12 6"/></svg>
+          </button>
+          <div class="nav__panel" role="menu">
+            <a href="https://pemetaan-lip-basisdatalahan.opendata.arcgis.com/pages/peta-kerja" class="nav__panel-item" role="menuitem">
+              <span class="nav__panel-label"><span class="nav__panel-dot" style="background:var(--c-ltt)"></span>Indikatif Kegiatan LIP</span>
+              <!-- <span class="nav__panel-tag">Nasional</span> -->
+            </a>
+            <a href="" class="nav__panel-item" role="menuitem">
+              <span class="nav__panel-label"><span class="nav__panel-dot" style="background:var(--c-rehab)"></span>Updating LBS Sumatera</span>
+              <!-- <span class="nav__panel-tag">Provinsi</span> -->
+            </a>
+            <a href="#" class="nav__panel-item" role="menuitem">
+              <span class="nav__panel-label"><span class="nav__panel-dot" style="background:var(--c-air)"></span>Petak Sawah Sleman</span>
+              <!-- <span class="nav__panel-tag">Kabupaten</span> -->
+            </a>
+          </div>
+        </div>
+
+        <a href="https://pemetaan-lip-basisdatalahan.opendata.arcgis.com/pages/tutorial" class="nav__link">Tutorial</a>
+        <a href="https://pemetaan-lip-basisdatalahan.opendata.arcgis.com/pages/kontak-kami~5a62b9c4f318478d9b16491dd87d896e" class="nav__link">Kontak Kami</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================== HERO / JUMBOTRON ===================== -->
+  <section class="hero">
+    <svg class="hero__bg" viewBox="0 0 1440 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+          <circle cx="1.2" cy="1.2" r="1.2" fill="#ffffff" opacity="0.10"/>
+        </pattern>
+      </defs>
+      <rect width="1440" height="620" fill="url(#dots)"/>
+      <g class="contours" stroke="#2E6B63" fill="none" stroke-width="1.4">
+        <path d="M-60,130 C160,90 340,175 560,120 C760,70 920,160 1120,105 C1260,70 1360,115 1500,95" opacity="0.38"/>
+        <path d="M-60,210 C180,170 360,255 580,200 C780,150 940,235 1140,185 C1280,150 1380,195 1500,175" opacity="0.24"/>
+        <path d="M-60,470 C180,510 360,435 580,485 C780,530 940,450 1140,495 C1280,525 1380,485 1500,505" opacity="0.28"/>
+      </g>
+      <g stroke="#2E6B63" fill="none" stroke-width="1.2" opacity="0.4">
+        <ellipse cx="1195" cy="480" rx="42" ry="26"/>
+        <ellipse cx="1195" cy="480" rx="92" ry="58"/>
+        <ellipse cx="1195" cy="480" rx="152" ry="96"/>
+        <ellipse cx="1195" cy="480" rx="222" ry="140"/>
+      </g>
+    </svg>
+
+    <span class="hero__coord hero__coord--tl">
+      <svg viewBox="0 0 10 10"><line x1="5" y1="0" x2="5" y2="10" stroke="currentColor"/><line x1="0" y1="5" x2="10" y2="5" stroke="currentColor"/></svg>
+      02°S · 118°E
+    </span>
+    <span class="hero__coord hero__coord--br">
+      06°S · 106°E
+      <svg viewBox="0 0 10 10"><line x1="5" y1="0" x2="5" y2="10" stroke="currentColor"/><line x1="0" y1="5" x2="10" y2="5" stroke="currentColor"/></svg>
+    </span>
+
+    <div class="hero__content">
+      <p class="eyebrow hero__eyebrow">Web-GIS Kolaboratif</p>
+      <h1 class="hero__title">Pemetaan Lahan dan Irigasi Pertanian</h1>
+      <p class="hero__subtitle">&ldquo;Geospatial Insight for Better Agriculture Policy&rdquo;</p>
+
+      <div class="hero__scale">
+        <svg viewBox="0 0 170 12" fill="none" stroke="currentColor" stroke-width="1">
+          <line x1="0" y1="6" x2="170" y2="6"/>
+          <line x1="0" y1="2" x2="0" y2="10"/>
+          <line x1="85" y1="3.5" x2="85" y2="8.5"/>
+          <line x1="170" y1="2" x2="170" y2="10"/>
+        </svg>
+        <span class="hero__scale-label">0&nbsp;&nbsp;100&nbsp;&nbsp;200&nbsp;km</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SEKSI: SATU PETA BANYAK TANGAN ===================== -->
+  <section class="kolaborasi">
+    <div class="kolaborasi__inner">
+      <div class="kolaborasi__illus-box">
+        <!-- Vektor Ilustrasi Tim GIS & Petani Memegang Peta Digital -->
+        <img src="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/14300aa7acd94e3595538d89d9a8dfef/data" class="kolaborasi__illus-box" alt="">
+      </div>
+
+      <div class="kolaborasi__content">
+        <h2 class="kolaborasi__title">Satu Peta, Banyak Tangan!</h2>
+        <p class="kolaborasi__desc">
+          Memanfaatkan teknologi Web-GIS, <strong>Direktorat Pemetaan Lahan dan Irigasi Pertanian</strong> mengembangkan Peta Kerja Dinamis yang dapat dikelola secara kolaboratif oleh tim pemetaan pusat, provinsi, kabupaten, penyuluh pertanian lapang, dan petani.
+        </p>
+        <p class="kolaborasi__desc">
+          Setiap input data geospasial dan atribut dari lapangan adalah kontribusi penting untuk menyusun arah pembangunan pertanian yang lebih akurat, sesuai dengan kebutuhan dan berkelanjutan, menuju swasembada pangan.
+        </p>
+        <p class="kolaborasi__note">
+          &ldquo;Karena data geospasial pertanian terbaik datang dari mereka yang paling dekat dengan lahan pertanian.&rdquo;
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <img src="https://basisdatalahan.maps.arcgis.com/sharing/rest/content/items/32b04a6677d44c7d8fd3ee7f05151d93/data" width="35px" alt="">
+        <div class="footer__org"><strong>Direktorat Jenderal</strong>Lahan dan Irigasi Pertanian</div>
+        <div class="footer__divider"></div>
+        <div class="footer__org"><strong>Direktorat Pemetaan</strong>Lahan dan Irigasi Pertanian</div>
+      </div>
+      <!-- <div class="footer__links">
+        <a href="#">Explore Feeds</a>
+        <a href="#">Manage Privacy</a>
+      </div> -->
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 Direktorat Pemetaan Lahan dan Irigasi Pertanian</span>
+      <span>Sistem Informasi Geospasial Pertanian</span>
+    </div>
+  </footer>
+
+  <script>
+    (function(){
+      var trigger = document.getElementById('petaKerjaTrigger');
+      var dropdown = document.getElementById('petaKerjaDropdown');
+
+      function closeDropdown(){
+        dropdown.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded','false');
+      }
+      trigger.addEventListener('click', function(e){
+        e.stopPropagation();
+        var isOpen = dropdown.classList.toggle('is-open');
+        trigger.setAttribute('aria-expanded', String(isOpen));
+      });
+      document.addEventListener('click', function(e){
+        if(!dropdown.contains(e.target)) closeDropdown();
+      });
+      document.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') closeDropdown();
+      });
+
+      var navToggle = document.getElementById('navToggle');
+      var navLinks = document.getElementById('navLinks');
+      navToggle.addEventListener('click', function(){
+        var isOpen = navLinks.classList.toggle('is-open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+      });
+    })();
+  </script>
+
+</body>
+</html>
