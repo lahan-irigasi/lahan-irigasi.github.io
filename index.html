@@ -80,17 +80,19 @@
   }
 
   /* ---------- HERO / JUMBOTRON (PAS 1 LAYAR / 100VH) ---------- */
+  /* Ganti 100vh menjadi 100% agar pas di dalam iframe ArcGIS */
   .hero { 
     position: relative; 
     background: var(--ink); 
     color: var(--text-on-ink); 
     overflow: hidden; 
-    min-height: calc(100vh - 61px);
+    height: calc(100% - 61px) !important; /* Pas dengan tinggi iframe dikurangi navbar */
+    min-height: 500px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 40px 28px 60px;
+    padding: 20px 28px 40px;
     box-sizing: border-box;
   }
   .hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; }
