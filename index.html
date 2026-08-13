@@ -79,15 +79,12 @@
     .nav__links.is-open { display: flex; }
   }
 
-  /* ---------- HERO / JUMBOTRON (PAS 1 LAYAR / 100VH) ---------- */
-  /* Ganti 100vh menjadi 100% agar pas di dalam iframe ArcGIS */
   .hero { 
     position: relative; 
     background: var(--ink); 
     color: var(--text-on-ink); 
     overflow: hidden; 
-    height: calc(100vh - 61px) !important; /* Pas dengan tinggi iframe dikurangi navbar */
-    min-height: 500px;
+    min-height: 720px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -486,91 +483,6 @@
     font-family: var(--font-mono);
     font-size: 10.5px;
     letter-spacing: 0.04em;
-  }
-</style>
-<style>
-  /* ---------- FIX KHUSUS IFRAME ARCGIS HUB (HEIGHT FIX) ---------- */
-  :root, html, body {
-    margin: 0 !important;
-    padding: 0 !important;
-    width: 100% !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important; /* Wajib auto agar bisa di-scroll di ArcGIS Hub */
-  }
-
-  /* Jumbotron Kunci Pas 1 Layar Monitor */
-  .hero { 
-    position: relative; 
-    background: var(--ink); 
-    color: var(--text-on-ink); 
-    overflow: hidden; 
-    
-    /* Gunakan svh / vh yang terkunci ketat */
-    height: calc(100svh - 61px) !important;
-    max-height: calc(100vh - 61px) !important;
-    min-height: 500px;
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px 28px 40px;
-    box-sizing: border-box;
-  }
-
-  /* Kunci Ukuran Gambar agar tidak mendorong teks ke bawah saat di Iframe */
-  .hero__illus-img {
-    width: 100%;
-    max-width: 320px;
-    max-height: 35vh; /* Batasi tinggi gambar maksimal 35% layar */
-    object-fit: contain;
-    height: auto;
-    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.3));
-  }
-
-  .hero__container {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 340px 1fr;
-    gap: 36px;
-    align-items: center;
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-height: 85%; /* Kunci agar container teks + gambar tidak jebol */
-  }
-
-  .hero__title { 
-    font-weight: 700; 
-    font-size: clamp(24px, 3.2vw, 42px); 
-    line-height: 1.15; 
-    color: #ffffff; 
-    letter-spacing: -.01em; 
-  }
-
-  .hero__subtitle { 
-    font-size: 14px; 
-    color: var(--text-on-ink-muted); 
-    line-height: 1.6; 
-  }
-
-  .hero__scroll-indicator {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    color: var(--line-bright);
-    font-family: var(--font-mono);
-    font-size: 16px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    z-index: 2;
-    animation: bounce 2s infinite;
   }
 </style>
 </head>
